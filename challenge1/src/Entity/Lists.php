@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\ListEntityRepository;
+use App\Repository\ListsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ListEntityRepository::class)]
-class ListEntity
+#[ORM\Entity(repositoryClass: ListsRepository::class)]
+class Lists
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,9 +22,9 @@ class ListEntity
     private ?string $description = null;
 
     /**
-     * @var Collection<int, ListItem>
+     * @var Collection<int, ListItems>
      */
-    #[ORM\OneToMany(targetEntity: ListItem::class, mappedBy: 'listID', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ListItems::class, mappedBy: 'listID', orphanRemoval: true)]
     private Collection $items;
 
     public function __construct()
@@ -62,14 +62,14 @@ class ListEntity
     }
 
     /**
-     * @return Collection<int, ListItem>
+     * @return Collection<int, ListItems>
      */
     public function getItems(): Collection
     {
         return $this->items;
     }
 
-    public function addItem(ListItem $item): static
+    public function addItem(ListItems $item): static
     {
         if (!$this->items->contains($item)) {
             $this->items->add($item);
@@ -79,15 +79,15 @@ class ListEntity
         return $this;
     }
 
-    public function removeItem(ListItem $item): static
-    {
-        if ($this->items->removeElement($item)) {
-            // set the owning side to null (unless already changed)
-            if ($item->getListID() === $this) {
-                $item->setListID(null);
-            }
-        }
-
-        return $this;
-    }
+    // public function removeItem(ListItems $item): static
+    // {
+    //     if ($this->items->removeElement($item)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($item->getListID() === $this) {
+    //             $item->setListID(null);
+    //         }
+    //     }
+    //
+    //     return $this;
+    // }
 }

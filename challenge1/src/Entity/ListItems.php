@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ListItemRepository;
+use App\Repository\ListItemsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: ListItemRepository::class)]
-class ListItem
+#[ORM\Entity(repositoryClass: ListItemsRepository::class)]
+class ListItems
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -21,7 +21,7 @@ class ListItem
 
     #[ORM\ManyToOne(inversedBy: 'items')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?ListEntity $listID = null;
+    private ?Lists $listID = null;
 
     public function getId(): ?int
     {
@@ -52,12 +52,12 @@ class ListItem
         return $this;
     }
 
-    public function getListID(): ?ListEntity
+    public function getListID(): ?Lists
     {
         return $this->listID;
     }
 
-    public function setListID(?ListEntity $listID): static
+    public function setListID(?Lists $listID): static
     {
         $this->listID = $listID;
 

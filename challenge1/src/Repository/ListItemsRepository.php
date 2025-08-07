@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\ListItem;
+use App\Entity\ListItems;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ListItem>
+ * @extends ServiceEntityRepository<ListItems>
  */
-class ListItemRepository extends ServiceEntityRepository
+class ListItemsRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ListItem::class);
+        parent::__construct($registry, ListItems::class);
     }
 
     //    /**
-    //     * @return ListItem[] Returns an array of ListItem objects
+    //     * @return ListItems[] Returns an array of ListItems objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class ListItemRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?ListItem
+    //    public function findOneBySomeField($value): ?ListItems
     //    {
     //        return $this->createQueryBuilder('l')
     //            ->andWhere('l.exampleField = :val')
