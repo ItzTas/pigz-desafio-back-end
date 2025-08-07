@@ -34,7 +34,6 @@ final class ListsController extends AbstractController
     {
         /** @var CreateListDTO $data */
         $data = $serializer->deserialize($req->getContent(), CreateListDTO::class, 'json');
-
         $errors = $this->validator->validate($data);
 
         if (!empty($errors)) {
@@ -42,7 +41,6 @@ final class ListsController extends AbstractController
         }
 
         $list = $this->listsRepository->createList($data);
-
         return $this->json($list);
     }
 }
