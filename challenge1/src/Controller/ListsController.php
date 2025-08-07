@@ -23,9 +23,10 @@ final class ListsController extends AbstractController
     }
 
     #[Route('/lists/{id}', name: 'get_list', methods: ['GET'])]
-    public function getList(): JsonResponse
+    public function getList(int $id): JsonResponse
     {
-        return $this->json([]);
+        $list = $this->listsRepository->getListByID($id);
+        return $this->json($list);
     }
 
     #[Route('/lists', name: 'crete_list', methods: ['POST'])]

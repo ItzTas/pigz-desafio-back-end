@@ -17,7 +17,7 @@ class ListsRepository extends ServiceEntityRepository
         parent::__construct($registry, Lists::class);
     }
 
-    public function createList(CreateListDTO $data): Lists
+    public function createList(CreateListDTO $data, bool $flush = true): Lists
     {
         $list = new Lists();
 
@@ -25,8 +25,16 @@ class ListsRepository extends ServiceEntityRepository
         $list->setDescription($data->getDescription());
 
         $this->getEntityManager()->persist($list);
-        $this->getEntityManager()->flush();
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
 
         return $list;
+    }
+
+    public function getListByID(int $id): ?Lists
+    {
+        return $this->find($id);
     }
 }
