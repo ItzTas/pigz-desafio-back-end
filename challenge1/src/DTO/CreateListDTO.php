@@ -2,8 +2,11 @@
 
 namespace App\DTO;
 
-class ListData
+use Symfony\Component\Validator\Constraints as Assert;
+
+class CreateListDTO
 {
+    #[Assert\NotBlank(message: 'Missing camp: name')]
     public string $name;
     public ?string $description = null;
 
