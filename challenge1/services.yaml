@@ -1,3 +1,11 @@
 services:
+
+  App\Service\ValidatorService:
+    arguments:
+      $validator: '@validator'
+
+  ValidatorService:
+    alias: App\Service\ValidatorService
+
   Symfony\Component\Serializer\SerializerInterface:
     alias: serializer
