@@ -79,15 +79,15 @@ class Lists
         return $this;
     }
 
-    // public function removeItem(ListItems $item): static
-    // {
-    //     if ($this->items->removeElement($item)) {
-    //         // set the owning side to null (unless already changed)
-    //         if ($item->getListID() === $this) {
-    //             $item->setListID(null);
-    //         }
-    //     }
-    //
-    //     return $this;
-    // }
+    public function removeItem(ListItems $item): static
+    {
+        if ($this->items->removeElement($item)) {
+            // set the owning side to null (unless already changed)
+            if ($item->getListID() === $this) {
+                $item->setListID(null);
+            }
+        }
+
+        return $this;
+    }
 }
