@@ -7,6 +7,7 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
 use function App\Utils\getTimeNowUTC;
 
 #[ORM\Entity(repositoryClass: ListsRepository::class)]
@@ -21,7 +22,7 @@ class Lists
     #[ORM\Column(length: 255, nullable: false)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(Type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
     /**

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ListItemsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\DBAL\Types\Types;
 
 use function App\Utils\getTimeNowUTC;
 
@@ -19,7 +20,7 @@ class ListItems
     #[ORM\Column(length: 255, nullable: false)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
     #[ORM\Column(type: 'boolean')]
