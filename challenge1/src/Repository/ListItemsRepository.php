@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\ListItems;
+use App\Entity\Lists;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,28 +17,19 @@ class ListItemsRepository extends ServiceEntityRepository
         parent::__construct($registry, ListItems::class);
     }
 
-    //    /**
-    //     * @return ListItems[] Returns an array of ListItems objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('l.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function createItem(string $name, ?string $description, Lists $list, bool $flush = true)
+    {
+        $item = new ListItems();
 
-    //    public function findOneBySomeField($value): ?ListItems
-    //    {
-    //        return $this->createQueryBuilder('l')
-    //            ->andWhere('l.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $item->setDescription($description);
+        $item->setName($name);
+        $item->setListID($list);
+
+        $this->getEntityManager()->persist($item);
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+
+        return $item;
+    }
 }

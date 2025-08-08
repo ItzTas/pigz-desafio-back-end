@@ -18,12 +18,12 @@ class ListsRepository extends ServiceEntityRepository
     }
 
 
-    public function createList(CreateListDTO $data, bool $flush = true): Lists
+    public function createList(string $name, ?string $description, bool $flush = true): Lists
     {
         $list = new Lists();
 
-        $list->setName($data->getName());
-        $list->setDescription($data->getDescription());
+        $list->setName($name);
+        $list->setDescription($description);
 
         $this->getEntityManager()->persist($list);
 
