@@ -46,4 +46,15 @@ class ListItemsRepository extends ServiceEntityRepository
     {
         return $this->find($id);
     }
+
+    public function deleteItemByID(int $id, bool $flush = true): static
+    {
+        $taskRef = $this->getEntityManager()->getReference(ListItems::class, $id);
+        $this->getEntityManager()->remove($taskRef);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+        return $this;
+    }
 }

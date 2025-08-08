@@ -32,6 +32,11 @@ final class ListsController extends AbstractController
     #[Route('/api/lists/{id<\d+>}', name: 'delete_list', methods: ['DELETE'])]
     public function deleteList(int $id): JsonResponse
     {
+        $list = $this->listsRepository->getListByID($id);
+        if ($list === null) {
+            return $this->json("list with id: $id not found", 404);
+        }
+
         $this->listsRepository->deleteListbyID($id);
         return $this->json([], 204);
     }

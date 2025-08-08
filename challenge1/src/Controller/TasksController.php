@@ -41,6 +41,7 @@ final class TasksController extends AbstractController
 
         return $this->json(new SerializableListItems($task));
     }
+
     #[Route('/api/tasks/{id<\d+>}/mark', name: 'mark_task', methods: ['PATCH'])]
     public function markTask(
         int $id,
@@ -48,9 +49,23 @@ final class TasksController extends AbstractController
     ): JsonResponse {
         $item = $this->listItemsRepository->getItemByID($id);
         if ($item === null) {
-            return $this->json("item with id: $id not found", 404);
+            return $this->json("task with id: $id not found", 404);
         }
-        $this->listItemsRepository->markItem($item, $data?->getIsDone() ?? true);
+        $isDone = $data?->getIsDone() ?? true;
+        $this->listItemsRepository->markItem($item, $isDone);
         return $this->json(new SerializableListItems($item));
+    }
+
+    #[Route('/api/tasks/{id<\d+>}', name: 'delete_task', methods: ['DELETE'])]
+    public function deleteTask(
+        int $id,
+    ): JsonResponse {
+        $item = $this->listItemsRepository->getItemByID($id);
+        if ($item === null) {
+            return $this->json("task with id: $id not found", 404);
+        }
+
+        $this->listItemsRepository->deleteItemByID($id);
+        return $this->json([], 204);
     }
 }

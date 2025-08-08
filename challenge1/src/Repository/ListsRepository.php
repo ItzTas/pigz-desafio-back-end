@@ -38,7 +38,7 @@ class ListsRepository extends ServiceEntityRepository
         return $this->find($id);
     }
 
-    public function deleteListbyID(int $id, bool $flush = true)
+    public function deleteListbyID(int $id, bool $flush = true): static
     {
         $listRef = $this->getEntityManager()->getReference(Lists::class, $id);
         $this->getEntityManager()->remove($listRef);
@@ -46,5 +46,6 @@ class ListsRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+        return $this;
     }
 }
