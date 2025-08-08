@@ -1,18 +1,22 @@
-FROM php:8.4-fpm-alpine
+FROM php:8.4.11-fpm-alpine
+
+WORKDIR /app/api
 
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
-WORKDIR /app
-
 COPY . .
 
-RUN apk update
+RUN apk update && apk add --no-cache git
 
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-RUN curl -sS  https://raw.githubusercontent.com/composer/getcomposer.org/f3108f64b4e1c1ce6eb462b159956461592b3e3e/web/installer \
-    | php -- --install-dir=/usr/local/bin --filename=composer \
-    composer install --no-dev --no-scripts --prefer-dist
+ENV PATH="$PATH:/usr/local/bin"
 
-RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh'
+RUN composer install
 
-CMD ["symfony", "server:start", "--port=8080"]
+RUN apk add --no-cache bash && \
+    curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | bash && \
+    apk add symfony-cli
+
+CMD ["symfony", "server:start", "--port=8080", "--allow-all-ip"]
+

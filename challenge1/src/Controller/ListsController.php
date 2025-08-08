@@ -22,6 +22,12 @@ final class ListsController extends AbstractController
         $this->validator = $validator;
     }
 
+    #[Route('hello_world', name: 'get_list', methods: ['GET'])]
+    public function helloWorld(): JsonResponse
+    {
+        return $this->json(["hello"]);
+    }
+
     #[Route('/lists/{id}', name: 'get_list', methods: ['GET'])]
     public function getList(int $id): JsonResponse
     {
