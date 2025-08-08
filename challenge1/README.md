@@ -9,8 +9,8 @@ php bin/console make:migration
 php bin/console doctrine:migrations:migrate
 ```
 
-Dentro do diretorio challenge1 execute
+agora é só rodar
 
 ```bash
-chmod 777 var/*.db
+docker compose up
 ```
