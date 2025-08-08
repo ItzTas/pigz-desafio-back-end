@@ -4,53 +4,42 @@ namespace App\Controller;
 
 use App\DTO\CreateListDTO;
 use App\Repository\ListsRepository;
-use App\Service\ValidatorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 
 final class ListsController extends AbstractController
 {
     private ListsRepository $listsRepository;
-    private ValidatorService $validator;
 
-    public function __construct(ListsRepository $listsRepository, ValidatorService $validator)
+    public function __construct(ListsRepository $listsRepository)
     {
         $this->listsRepository = $listsRepository;
-        $this->validator = $validator;
     }
 
-    #[Route('/lists/{id}', name: 'get_list', methods: ['GET'])]
+    #[Route('/api/lists/{id<\d+>}', name: 'get_list', methods: ['GET'])]
     public function getList(int $id): JsonResponse
     {
         $list = $this->listsRepository->getListByID($id);
-        if ($list == null) {
-            return $this->json("list not found", 404);
+        if ($list === null) {
+            return $this->json("list with id: $id not found", 404);
         }
         return $this->json($list);
     }
 
-    #[Route('/lists/{id}', name: 'delete_list', methods: ['DELETE'])]
+    #[Route('/api/lists/{id<\d+>}', name: 'delete_list', methods: ['DELETE'])]
     public function deleteList(int $id): JsonResponse
     {
         $this->listsRepository->deleteListbyID($id);
         return $this->json([], 204);
     }
 
-    #[Route('/lists', name: 'create_list', methods: ['POST'])]
-    public function createList(Request $req, SerializerInterface $serializer): JsonResponse
-    {
-        /** @var CreateListDTO $data */
-        $data = $serializer->deserialize($req->getContent(), CreateListDTO::class, 'json');
-        $errors = $this->validator->validate($data);
-
-        if (!empty($errors)) {
-            return $this->json(['errors' => $errors], 422);
-        }
-
-        $list = $this->listsRepository->createList($data);
+    #[Route('/api/lists', name: 'create_list', methods: ['POST'])]
+    public function createList(
+        #[MapRequestPayload] CreateListDTO $data,
+    ): JsonResponse {
+        $list = $this->listsRepository->createList($data->getName(), $data->getDescription());
         return $this->json($list);
     }
 }
