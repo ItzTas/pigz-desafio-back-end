@@ -44,13 +44,13 @@ final class TasksController extends AbstractController
     #[Route('/api/tasks/{id<\d+>}/mark', name: 'mark_task', methods: ['PATCH'])]
     public function markTask(
         int $id,
-        #[MapRequestPayload] MarkTaskDTO $data,
+        #[MapRequestPayload] ?MarkTaskDTO $data,
     ): JsonResponse {
         $item = $this->listItemsRepository->getItemByID($id);
         if ($item === null) {
             return $this->json("item with id: $id not found", 404);
         }
-        $this->listItemsRepository->markItem($item, $data->getIsDone());
+        $this->listItemsRepository->markItem($item, $data?->getIsDone() ?? true);
         return $this->json(new SerializableListItems($item));
     }
 }

@@ -4,7 +4,7 @@ namespace App\DTO;
 
 class MarkTaskDTO
 {
-    public bool $isDone = true;
+    public ?bool $isDone;
 
     public function getIsDone(): bool
     {
