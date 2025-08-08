@@ -16,7 +16,7 @@ RUN composer install
 
 RUN apk add --no-cache bash && \
     curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | bash && \
-    apk add symfony-cli
+    apk add --no-cache symfony-cli
 
 CMD ["symfony", "server:start", "--port=8080", "--allow-all-ip"]
 
