@@ -2,28 +2,28 @@
 
 namespace App\Repository;
 
-use App\Entity\ListItems;
-use App\Entity\Lists;
+use App\Entity\ListItem;
+use App\Entity\ListEntity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<ListItems>
+ * @extends ServiceEntityRepository<ListItem>
  */
-class ListItemsRepository extends ServiceEntityRepository
+class ListItemRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, ListItems::class);
+        parent::__construct($registry, ListItem::class);
     }
 
-    public function createItem(string $name, ?string $description, Lists $list, bool $flush = true)
+    public function createItem(string $name, ?string $description, ListEntity $list, bool $flush = true)
     {
-        $item = new ListItems();
+        $item = new ListItem();
 
         $item->setDescription($description);
         $item->setName($name);
-        $item->setList($list);
+        $item->setListEntity($list);
 
         $this->getEntityManager()->persist($item);
         if ($flush) {
@@ -33,7 +33,7 @@ class ListItemsRepository extends ServiceEntityRepository
         return $item;
     }
 
-    public function markItem(ListItems $item, bool $isDone = true,  bool $flush = true): ListItems
+    public function markItem(ListItem $item, bool $isDone = true,  bool $flush = true): ListItem
     {
         $item->setIsDone($isDone);
 
@@ -42,14 +42,14 @@ class ListItemsRepository extends ServiceEntityRepository
         }
         return $item;
     }
-    public function getItemByID(int $id): ?ListItems
+    public function getItemByID(int $id): ?ListItem
     {
         return $this->find($id);
     }
 
     public function deleteItemByID(int $id, bool $flush = true): static
     {
-        $taskRef = $this->getEntityManager()->getReference(ListItems::class, $id);
+        $taskRef = $this->getEntityManager()->getReference(ListItem::class, $id);
         $this->getEntityManager()->remove($taskRef);
 
         if ($flush) {

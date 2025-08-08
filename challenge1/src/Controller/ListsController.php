@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\DTO\CreateListDTO;
-use App\Repository\ListsRepository;
-use App\DTO\SerializableLists;
+use App\Repository\ListEntityRepository;
+use App\DTO\SerializableListEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -12,9 +12,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class ListsController extends AbstractController
 {
-    private ListsRepository $listsRepository;
+    private ListEntityRepository $listsRepository;
 
-    public function __construct(ListsRepository $listsRepository)
+    public function __construct(ListEntityRepository $listsRepository)
     {
         $this->listsRepository = $listsRepository;
     }
@@ -26,7 +26,7 @@ final class ListsController extends AbstractController
         if ($list === null) {
             return $this->json("list with id: $id not found", 404);
         }
-        return $this->json(new SerializableLists($list));
+        return $this->json(new SerializableListEntity($list));
     }
 
     #[Route('/api/lists/{id<\d+>}', name: 'delete_list', methods: ['DELETE'])]
@@ -46,6 +46,6 @@ final class ListsController extends AbstractController
         #[MapRequestPayload] CreateListDTO $data,
     ): JsonResponse {
         $list = $this->listsRepository->createList($data->getName(), $data->getDescription());
-        return $this->json(new SerializableLists($list));
+        return $this->json(new SerializableListEntity($list));
     }
 }

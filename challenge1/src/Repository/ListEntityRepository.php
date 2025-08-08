@@ -2,24 +2,24 @@
 
 namespace App\Repository;
 
-use App\Entity\Lists;
+use App\Entity\ListEntity;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Lists>
+ * @extends ServiceEntityRepository<ListEntity>
  */
-class ListsRepository extends ServiceEntityRepository
+class ListEntityRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Lists::class);
+        parent::__construct($registry, ListEntity::class);
     }
 
 
-    public function createList(string $name, ?string $description, bool $flush = true): Lists
+    public function createList(string $name, ?string $description, bool $flush = true): ListEntity
     {
-        $list = new Lists();
+        $list = new ListEntity();
 
         $list->setName($name);
         $list->setDescription($description);
@@ -33,14 +33,14 @@ class ListsRepository extends ServiceEntityRepository
         return $list;
     }
 
-    public function getListByID(int $id): ?Lists
+    public function getListByID(int $id): ?ListEntity
     {
         return $this->find($id);
     }
 
     public function deleteListbyID(int $id, bool $flush = true): static
     {
-        $listRef = $this->getEntityManager()->getReference(Lists::class, $id);
+        $listRef = $this->getEntityManager()->getReference(ListEntity::class, $id);
         $this->getEntityManager()->remove($listRef);
 
         if ($flush) {

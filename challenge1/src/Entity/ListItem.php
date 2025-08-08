@@ -2,17 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\ListsRepository;
-use DateTimeImmutable;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\ListItemRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+
 use function App\Utils\getTimeNowUTC;
 
-#[ORM\Entity(repositoryClass: ListsRepository::class)]
+#[ORM\Entity(repositoryClass: ListItemRepository::class)]
 #[ORM\HasLifecycleCallbacks]
-class Lists
+class ListItem
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -22,14 +20,15 @@ class Lists
     #[ORM\Column(length: 255, nullable: false)]
     private ?string $name = null;
 
-    #[ORM\Column(Type: Types::TEXT, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
-    /**
-     * @var Collection<int, ListItems>
-     */
-    #[ORM\OneToMany(targetEntity: ListItems::class, mappedBy: 'list', orphanRemoval: true)]
-    private Collection $items;
+    #[ORM\Column(type: 'boolean')]
+    private bool $isDone = false;
+
+    #[ORM\ManyToOne(inversedBy: 'items')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?ListEntity $list = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -49,11 +48,6 @@ class Lists
     public function onPreUpdate(): void
     {
         $this->updatedAt = getTimeNowUTC();
-    }
-
-    public function __construct()
-    {
-        $this->items = new ArrayCollection();
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
@@ -78,9 +72,20 @@ class Lists
         return $this;
     }
 
+    public function getIsDone(): bool
+    {
+        return $this->isDone;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setIsDone(bool $isDone): static
+    {
+        $this->isDone = $isDone;
+        return $this;
     }
 
     public function getName(): string
@@ -100,39 +105,21 @@ class Lists
         return $this->description;
     }
 
-    public function setDescription(?string $description): static
+    public function setDescription(string $description): static
     {
         $this->description = $description;
 
         return $this;
     }
 
-    /**
-     * @return Collection<int, ListItems>
-     */
-    public function getItems(): Collection
+    public function getList(): ?ListEntity
     {
-        return $this->items;
+        return $this->list;
     }
 
-    public function addItem(ListItems $item): static
+    public function setListEntity(?ListEntity $list): static
     {
-        if (!$this->items->contains($item)) {
-            $this->items->add($item);
-            $item->setList($this);
-        }
-
-        return $this;
-    }
-
-    public function removeItem(ListItems $item): static
-    {
-        if ($this->items->removeElement($item)) {
-            // set the owning side to null (unless already changed)
-            if ($item->getList() === $this) {
-                $item->setList(null);
-            }
-        }
+        $this->list = $list;
 
         return $this;
     }

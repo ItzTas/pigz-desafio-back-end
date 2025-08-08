@@ -2,9 +2,9 @@
 
 namespace App\DTO;
 
-use App\Entity\Lists;
+use App\Entity\ListEntity;
 
-class SerializableLists
+class SerializableListEntity
 {
     public \DateTimeImmutable $createdAt;
     public \DateTimeImmutable $updatedAt;
@@ -13,28 +13,28 @@ class SerializableLists
     public ?string $description;
     public int $listId;
 
-    /** @var SerializableListItems[] */
+    /** @var SerializableListItem[] */
     public array $items;
 
-    public function __construct(Lists $list)
+    public function __construct(ListEntity $list)
     {
         $this->createdAt = $list->getCreatedAt();
         $this->updatedAt = $list->getUpdatedAt();
         $this->id = $list->getId();
         $this->name = $list->getName();
         $this->description = $list->getDescription();
-        $this->items = $this->getSerializableListItems($list->getItems());
+        $this->items = $this->getSerializableListItem($list->getItems());
     }
 
     /**
-     * @param \Doctrine\Common\Collections\Collection<int, \App\Entity\ListItems> $items
-     * @return SerializableListItems[]
+     * @param \Doctrine\Common\Collections\Collection<int, \App\Entity\ListItem> $items
+     * @return SerializableListItem[]
      */
-    private function getSerializableListItems(\Doctrine\Common\Collections\Collection $items): array
+    private function getSerializableListItem(\Doctrine\Common\Collections\Collection $items): array
     {
         $serializables = [];
         foreach ($items as $item) {
-            $serializables[] = new SerializableListItems($item);
+            $serializables[] = new SerializableListItem($item);
         }
         return $serializables;
     }

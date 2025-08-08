@@ -2,9 +2,9 @@
 
 namespace App\DTO;
 
-use App\Entity\ListItems;
+use App\Entity\ListItem;
 
-class SerializableListItems
+class SerializableListItem
 {
     public \DateTimeImmutable $createdAt;
     public \DateTimeImmutable $updatedAt;
@@ -14,7 +14,7 @@ class SerializableListItems
     public int $listId;
     public bool $isDone;
 
-    public function __construct(ListItems $item)
+    public function __construct(ListItem $item)
     {
         $this->createdAt = $item->getCreatedAt();
         $this->updatedAt = $item->getUpdatedAt();

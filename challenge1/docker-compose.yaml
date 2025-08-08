@@ -8,5 +8,45 @@ services:
       - ./.env
     ports:
       - 8080:8080
+    networks:
+      - app
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    image: postgres:17.5
+    ports:
+      - 5432:5432
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+    networks:
+      - app
     volumes:
-      - .:/app/api
+      - ./var/lib/postgresql/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user", "-d", "db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  # pgadmin:
+  #   image: elestio/pgadmin:latest
+  #   ports:
+  #     - 8081:8081
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: p@h.com
+  #     PGADMIN_DEFAULT_PASSWORD: password
+  #     PGADMIN_LISTEN_PORT: 8081
+  #   networks:
+  #     - app
+  #   volumes:
+  #     - ../docker/dbdata/pgadmindata:/var/lib/pgadmin
+networks:
+  app:
+    driver: bridge

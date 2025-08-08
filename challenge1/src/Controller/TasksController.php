@@ -4,9 +4,9 @@ namespace App\Controller;
 
 use App\DTO\CreateTaskDTO;
 use App\DTO\MarkTaskDTO;
-use App\Repository\ListItemsRepository;
-use App\Repository\ListsRepository;
-use App\DTO\SerializableListItems;
+use App\Repository\ListItemRepository;
+use App\Repository\ListEntityRepository;
+use App\DTO\SerializableListItem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
@@ -14,10 +14,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class TasksController extends AbstractController
 {
-    private ListsRepository $listsRepository;
-    private ListItemsRepository $listItemsRepository;
+    private ListEntityRepository $listsRepository;
+    private ListItemRepository $listItemsRepository;
 
-    public function __construct(ListsRepository $listsRepository, ListItemsRepository $listItemsRepository)
+    public function __construct(ListEntityRepository $listsRepository, ListItemRepository $listItemsRepository)
     {
         $this->listsRepository = $listsRepository;
         $this->listItemsRepository = $listItemsRepository;
@@ -39,7 +39,7 @@ final class TasksController extends AbstractController
             $list,
         );
 
-        return $this->json(new SerializableListItems($task));
+        return $this->json(new SerializableListItem($task));
     }
 
     #[Route('/api/tasks/{id<\d+>}/mark', name: 'mark_task', methods: ['PATCH'])]
@@ -53,7 +53,7 @@ final class TasksController extends AbstractController
         }
         $isDone = $data?->getIsDone() ?? true;
         $this->listItemsRepository->markItem($item, $isDone);
-        return $this->json(new SerializableListItems($item));
+        return $this->json(new SerializableListItem($item));
     }
 
     #[Route('/api/tasks/{id<\d+>}', name: 'delete_task', methods: ['DELETE'])]
