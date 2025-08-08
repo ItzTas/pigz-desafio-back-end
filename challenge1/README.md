@@ -2,7 +2,7 @@
 
 ## Instruções
 
-Antes de iniciar a api execute esses comandos
+Antes de iniciar a api execute esses comandos dentro do diretorio challenge1
 
 ```bash
 composer install
