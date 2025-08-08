@@ -5,7 +5,10 @@ namespace App\Entity;
 use App\Repository\ListItemsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+use function App\Utils\getTimeNowUTC;
+
 #[ORM\Entity(repositoryClass: ListItemsRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class ListItems
 {
     #[ORM\Id]
@@ -24,7 +27,7 @@ class ListItems
 
     #[ORM\ManyToOne(inversedBy: 'items')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Lists $listID = null;
+    private ?Lists $list = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -35,7 +38,7 @@ class ListItems
     #[ORM\PrePersist]
     public function onPrePersist(): void
     {
-        $now = new \DateTimeImmutable();
+        $now = getTimeNowUTC();
         $this->createdAt = $now;
         $this->updatedAt = $now;
     }
@@ -43,7 +46,7 @@ class ListItems
     #[ORM\PreUpdate]
     public function onPreUpdate(): void
     {
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->updatedAt = getTimeNowUTC();
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
@@ -108,14 +111,14 @@ class ListItems
         return $this;
     }
 
-    public function getListID(): ?Lists
+    public function getList(): ?Lists
     {
-        return $this->listID;
+        return $this->list;
     }
 
-    public function setListID(?Lists $listID): static
+    public function setList(?Lists $list): static
     {
-        $this->listID = $listID;
+        $this->list = $list;
 
         return $this;
     }

@@ -23,7 +23,7 @@ class ListItemsRepository extends ServiceEntityRepository
 
         $item->setDescription($description);
         $item->setName($name);
-        $item->setListID($list);
+        $item->setList($list);
 
         $this->getEntityManager()->persist($item);
         if ($flush) {
@@ -31,5 +31,19 @@ class ListItemsRepository extends ServiceEntityRepository
         }
 
         return $item;
+    }
+
+    public function markItem(ListItems $item, bool $isDone = true,  bool $flush = true): ListItems
+    {
+        $item->setIsDone($isDone);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+        return $item;
+    }
+    public function getItemByID(int $id): ?ListItems
+    {
+        return $this->find($id);
     }
 }

@@ -1,4 +1,1 @@
 services:
-
-  Symfony\Component\Serializer\SerializerInterface:
-    alias: serializer

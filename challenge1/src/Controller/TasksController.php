@@ -3,15 +3,14 @@
 namespace App\Controller;
 
 use App\DTO\CreateTaskDTO;
+use App\DTO\MarkTaskDTO;
 use App\Repository\ListItemsRepository;
 use App\Repository\ListsRepository;
-use App\Service\ValidatorService;
+use App\DTO\SerializableListItems;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Serializer\SerializerInterface;
 
 final class TasksController extends AbstractController
 {
@@ -24,7 +23,7 @@ final class TasksController extends AbstractController
         $this->listItemsRepository = $listItemsRepository;
     }
 
-    #[Route('/api/list/{listID<\d+>}/task', name: 'create_task', methods: ['POST'])]
+    #[Route('/api/lists/{listID<\d+>}/tasks', name: 'create_task', methods: ['POST'])]
     public function createTask(
         int $listID,
         #[MapRequestPayload] CreateTaskDTO $data,
@@ -40,6 +39,18 @@ final class TasksController extends AbstractController
             $list,
         );
 
-        return $this->json($task);
+        return $this->json(new SerializableListItems($task));
+    }
+    #[Route('/api/tasks/{id<\d+>}/mark', name: 'mark_task', methods: ['PATCH'])]
+    public function markTask(
+        int $id,
+        #[MapRequestPayload] MarkTaskDTO $data,
+    ): JsonResponse {
+        $item = $this->listItemsRepository->getItemByID($id);
+        if ($item === null) {
+            return $this->json("item with id: $id not found", 404);
+        }
+        $this->listItemsRepository->markItem($item, $data->getIsDone());
+        return $this->json(new SerializableListItems($item));
     }
 }

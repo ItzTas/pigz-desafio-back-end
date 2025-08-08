@@ -2,7 +2,6 @@
 
 namespace App\Repository;
 
-use App\DTO\CreateListDTO;
 use App\Entity\Lists;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;

@@ -3,11 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\ListsRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use function App\Utils\getTimeNowUTC;
 
 #[ORM\Entity(repositoryClass: ListsRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Lists
 {
     #[ORM\Id]
@@ -21,11 +24,10 @@ class Lists
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-
     /**
      * @var Collection<int, ListItems>
      */
-    #[ORM\OneToMany(targetEntity: ListItems::class, mappedBy: 'listID', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: ListItems::class, mappedBy: 'list', orphanRemoval: true)]
     private Collection $items;
 
     #[ORM\Column]
@@ -37,7 +39,7 @@ class Lists
     #[ORM\PrePersist]
     public function onPrePersist(): void
     {
-        $now = new \DateTimeImmutable();
+        $now = getTimeNowUTC();
         $this->createdAt = $now;
         $this->updatedAt = $now;
     }
@@ -45,7 +47,7 @@ class Lists
     #[ORM\PreUpdate]
     public function onPreUpdate(): void
     {
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->updatedAt = getTimeNowUTC();
     }
 
     public function __construct()
@@ -116,7 +118,7 @@ class Lists
     {
         if (!$this->items->contains($item)) {
             $this->items->add($item);
-            $item->setListID($this);
+            $item->setList($this);
         }
 
         return $this;
@@ -126,8 +128,8 @@ class Lists
     {
         if ($this->items->removeElement($item)) {
             // set the owning side to null (unless already changed)
-            if ($item->getListID() === $this) {
-                $item->setListID(null);
+            if ($item->getList() === $this) {
+                $item->setList(null);
             }
         }
 
