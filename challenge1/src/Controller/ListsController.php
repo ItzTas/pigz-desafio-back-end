@@ -22,20 +22,24 @@ final class ListsController extends AbstractController
         $this->validator = $validator;
     }
 
-    #[Route('hello_world', name: 'get_list', methods: ['GET'])]
-    public function helloWorld(): JsonResponse
-    {
-        return $this->json(["hello"]);
-    }
-
     #[Route('/lists/{id}', name: 'get_list', methods: ['GET'])]
     public function getList(int $id): JsonResponse
     {
         $list = $this->listsRepository->getListByID($id);
+        if ($list == null) {
+            return $this->json("list not found", 404);
+        }
         return $this->json($list);
     }
 
-    #[Route('/lists', name: 'crete_list', methods: ['POST'])]
+    #[Route('/lists/{id}', name: 'delete_list', methods: ['DELETE'])]
+    public function deleteList(int $id): JsonResponse
+    {
+        $this->listsRepository->deleteListbyID($id);
+        return $this->json([], 204);
+    }
+
+    #[Route('/lists', name: 'create_list', methods: ['POST'])]
     public function createList(Request $req, SerializerInterface $serializer): JsonResponse
     {
         /** @var CreateListDTO $data */

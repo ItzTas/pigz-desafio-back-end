@@ -17,6 +17,7 @@ class ListsRepository extends ServiceEntityRepository
         parent::__construct($registry, Lists::class);
     }
 
+
     public function createList(CreateListDTO $data, bool $flush = true): Lists
     {
         $list = new Lists();
@@ -36,5 +37,15 @@ class ListsRepository extends ServiceEntityRepository
     public function getListByID(int $id): ?Lists
     {
         return $this->find($id);
+    }
+
+    public function deleteListbyID(int $id, bool $flush = true)
+    {
+        $listRef = $this->getEntityManager()->getReference(Lists::class, $id);
+        $this->getEntityManager()->remove($listRef);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
     }
 }
