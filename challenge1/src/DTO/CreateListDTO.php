@@ -8,6 +8,7 @@ class CreateListDTO
 {
     #[Assert\NotBlank(message: 'Missing camp: name')]
     public string $name;
+
     public ?string $description = null;
 
     public function getName(): ?string
