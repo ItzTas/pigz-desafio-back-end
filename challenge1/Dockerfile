@@ -29,6 +29,4 @@ RUN apk add --no-cache \
 COPY ./scripts/init.sh /init.sh
 RUN chmod +x /init.sh
 
-CMD [ "bash", "/init.sh" ]
-
-# CMD ["symfony", "server:start", "--port=8080", "--allow-all-ip"]
+CMD ["bash", "/init.sh"]
