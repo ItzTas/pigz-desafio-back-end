@@ -19,7 +19,7 @@ final class ListsController extends AbstractController
         $this->listsRepository = $listsRepository;
     }
 
-    #[Route('/api/lists/{id<\d+>}', name: 'get_list', methods: ['GET'])]
+    #[Route('/lists/{id<\d+>}', name: 'get_list', methods: ['GET'])]
     public function getList(int $id): JsonResponse
     {
         $list = $this->listsRepository->getListByID($id);
@@ -29,7 +29,7 @@ final class ListsController extends AbstractController
         return $this->json(new SerializableListEntity($list));
     }
 
-    #[Route('/api/lists/{id<\d+>}', name: 'delete_list', methods: ['DELETE'])]
+    #[Route('/lists/{id<\d+>}', name: 'delete_list', methods: ['DELETE'])]
     public function deleteList(int $id): JsonResponse
     {
         $list = $this->listsRepository->getListByID($id);
@@ -41,7 +41,7 @@ final class ListsController extends AbstractController
         return $this->json([], 204);
     }
 
-    #[Route('/api/lists', name: 'create_list', methods: ['POST'])]
+    #[Route('/lists', name: 'create_list', methods: ['POST'])]
     public function createList(
         #[MapRequestPayload] CreateListDTO $data,
     ): JsonResponse {

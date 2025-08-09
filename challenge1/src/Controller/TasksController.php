@@ -23,7 +23,7 @@ final class TasksController extends AbstractController
         $this->listItemsRepository = $listItemsRepository;
     }
 
-    #[Route('/api/lists/{listID<\d+>}/tasks', name: 'create_task', methods: ['POST'])]
+    #[Route('/lists/{listID<\d+>}/tasks', name: 'create_task', methods: ['POST'])]
     public function createTask(
         int $listID,
         #[MapRequestPayload] CreateTaskDTO $data,
@@ -42,7 +42,7 @@ final class TasksController extends AbstractController
         return $this->json(new SerializableListItem($task));
     }
 
-    #[Route('/api/tasks/{id<\d+>}/mark', name: 'mark_task', methods: ['PATCH'])]
+    #[Route('/tasks/{id<\d+>}/mark', name: 'mark_task', methods: ['PATCH'])]
     public function markTask(
         int $id,
         #[MapRequestPayload] ?MarkTaskDTO $data,
@@ -56,7 +56,7 @@ final class TasksController extends AbstractController
         return $this->json(new SerializableListItem($item));
     }
 
-    #[Route('/api/tasks/{id<\d+>}', name: 'delete_task', methods: ['DELETE'])]
+    #[Route('/tasks/{id<\d+>}', name: 'delete_task', methods: ['DELETE'])]
     public function deleteTask(
         int $id,
     ): JsonResponse {
