@@ -27,8 +27,8 @@ RUN apk add --no-cache \
     && docker-php-ext-enable pdo_pgsql
 
 COPY ./scripts/init.sh /init.sh
-RUN chmod +x ./init.sh
+RUN chmod +x /init.sh
 
-ENTRYPOINT [ "/init.sh" ]
+CMD [ "bash", "/init.sh" ]
 
-CMD ["symfony", "server:start", "--port=8080", "--allow-all-ip"]
+# CMD ["symfony", "server:start", "--port=8080", "--allow-all-ip"]
