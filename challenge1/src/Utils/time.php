@@ -2,7 +2,10 @@
 
 namespace App\Utils;
 
-function getTimeNowUTC(): \DateTimeImmutable
+class TimeUtils
 {
-    return (new \DateTimeImmutable())->setTimezone(new \DateTimeZone('UTC'));
+    public static function getTimeNowUTC(): \DateTimeImmutable
+    {
+        return (new \DateTimeImmutable())->setTimezone(new \DateTimeZone('UTC'));
+    }
 }
