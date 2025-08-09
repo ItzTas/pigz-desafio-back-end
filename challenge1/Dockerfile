@@ -26,6 +26,10 @@ RUN apk add --no-cache \
     && docker-php-ext-install pdo pdo_pgsql \
     && docker-php-ext-enable pdo_pgsql
 
+RUN apk add --no-cache php-sodium \
+    && docker-php-ext-enable sodium
+
+
 COPY ./scripts/init.sh /init.sh
 RUN chmod +x /init.sh
 

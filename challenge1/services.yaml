@@ -1,1 +1,6 @@
 services:
+  App\Service\AuthService:
+    alias: AuthService
+    arguments:
+      $passwordHasher: '@security.password_hasher'
+      $jwtManager: '@lexik_jwt_authentication.jwt_manager'
