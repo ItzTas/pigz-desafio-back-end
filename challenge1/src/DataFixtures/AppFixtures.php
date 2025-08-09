@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Permissions;
+use App\Entity\Permission;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
@@ -25,7 +25,7 @@ class AppFixtures extends Fixture
             'description' => 'Create and register new users',
         ]];
         foreach ($permissions as $perm) {
-            $permission = new Permissions();
+            $permission = new Permission();
             $permission->setName($perm['name']);
             $permission->setDescription($perm['description']);
             $manager->persist($permission);
