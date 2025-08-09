@@ -5,9 +5,6 @@ namespace App\Entity;
 use App\Repository\UserPermissionRepository;
 use App\Utils\TimeUtils;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\Time;
-
-use function App\Utils\getTimeNowUTC;
 
 #[ORM\Entity(repositoryClass: UserPermissionRepository::class)]
 #[ORM\Table(name: '`users_permissions`')]
