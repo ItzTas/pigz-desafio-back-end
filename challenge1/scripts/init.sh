@@ -2,9 +2,15 @@
 
 cleanup() {
     echo "Stoping server"
-    symfony server:stop
+    symfony server:stop || true
+    rm -f var/*.pid /tmp/*.pid /root/.symfony*/server.json 2>/dev/null || true
     exit 0
 }
+
+trap cleanup_and_exit SIGINT SIGTERM
+
+symfony server:stop || true
+rm -f var/*.pid /tmp/*.pid /root/.symfony*/server.json 2>/dev/null || true
 
 symfony server:stop >/dev/null 2>&1
 

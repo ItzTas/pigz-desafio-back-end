@@ -8,4 +8,5 @@
 ###< symfony/framework-bundle ###
 /var/
 /migrations/*
+/dbdata
 
