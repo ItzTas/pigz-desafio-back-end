@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use function App\Utils\getTimeNowUTC;
 
 #[ORM\Entity(repositoryClass: ListItemRepository::class)]
+#[ORM\Table(name: '`list_items`')]
 #[ORM\HasLifecycleCallbacks]
 class ListItem
 {
@@ -53,12 +54,6 @@ class ListItem
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-        return $this;
     }
 
     public function getUpdatedAt(): ?\DateTimeImmutable
