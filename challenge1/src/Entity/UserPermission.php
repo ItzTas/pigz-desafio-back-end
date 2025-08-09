@@ -7,7 +7,7 @@ use App\Utils\TimeUtils;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserPermissionRepository::class)]
-#[ORM\Table(name: '`users_permissions`')]
+#[ORM\Table(name: '`user_permissions`')]
 #[ORM\HasLifecycleCallbacks]
 class UserPermission
 {
