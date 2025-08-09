@@ -3,11 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\ListEntityRepository;
+use App\Utils\TimeUtils;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
+use Symfony\Component\Validator\Constraints\Time;
+
 use function App\Utils\getTimeNowUTC;
 
 #[ORM\Entity(repositoryClass: ListEntityRepository::class)]
@@ -41,7 +44,7 @@ class ListEntity
     #[ORM\PrePersist]
     public function onPrePersist(): void
     {
-        $now = getTimeNowUTC();
+        $now = TimeUtils::getTimeNowUTC();
         $this->createdAt = $now;
         $this->updatedAt = $now;
     }
@@ -49,7 +52,7 @@ class ListEntity
     #[ORM\PreUpdate]
     public function onPreUpdate(): void
     {
-        $this->updatedAt = getTimeNowUTC();
+        $this->updatedAt = TimeUtils::getTimeNowUTC();
     }
 
     public function __construct()

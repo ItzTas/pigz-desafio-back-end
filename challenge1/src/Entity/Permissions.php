@@ -34,6 +34,21 @@ class Permission
         $this->userPermissions = new ArrayCollection();
     }
 
+    /**
+     * Retorna as roles padrão do sistema.
+     *
+     * @return array<array{name: string, description: string}>
+     */
+    public static function getPermissions(): array
+    {
+        return [
+            [
+                'name' => 'CREATE_USERS',
+                'description' => 'Create and register new users',
+            ],
+        ];
+    }
+
     public function getId(): ?int
     {
         return $this->id;

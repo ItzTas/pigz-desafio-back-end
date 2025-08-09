@@ -2,30 +2,30 @@
 
 namespace App\Entity;
 
-use App\Repository\UserPermissionRepository;
+use App\Repository\UserRoleRepository;
 use App\Utils\TimeUtils;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints\Time;
 
-use function App\Utils\getTimeNowUTC;
-
-#[ORM\Entity(repositoryClass: UserPermissionRepository::class)]
+#[ORM\Entity(repositoryClass: UserRoleRepository::class)]
 #[ORM\Table(name: '`users_permissions`')]
 #[ORM\HasLifecycleCallbacks]
-class UserPermission
+class UserRole
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userPermissions')]
+    #[ORM\ManyToOne(inversedBy: 'userRoles')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $userEntity = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userPermissions')]
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
+
+    #[ORM\ManyToOne(inversedBy: 'userRoles')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Permission $permission = null;
+    private ?Role $role = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -63,6 +63,7 @@ class UserPermission
         return $this;
     }
 
+
     public function getId(): ?int
     {
         return $this->id;
@@ -80,14 +81,26 @@ class UserPermission
         return $this;
     }
 
-    public function getPermission(): ?Permission
+    public function getName(): ?string
     {
-        return $this->permission;
+        return $this->name;
     }
 
-    public function setPermission(?Permission $permission): static
+    public function setName(string $name): static
     {
-        $this->permission = $permission;
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getRole(): ?Role
+    {
+        return $this->role;
+    }
+
+    public function setRole(?Role $role): static
+    {
+        $this->role = $role;
 
         return $this;
     }

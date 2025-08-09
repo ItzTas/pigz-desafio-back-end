@@ -3,24 +3,27 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use App\Utils\TimeUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 use function App\Utils\getTimeNowUTC;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`users`')]
 #[ORM\HasLifecycleCallbacks]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 320)]
+    #[ORM\Column(length: 255)]
     private ?string $name = null;
 
     #[ORM\Column(length: 320)]
@@ -36,20 +39,53 @@ class User
     private ?\DateTimeImmutable $updatedAt = null;
 
     /**
+     * @see UserInterface
+     */
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = [];
+        foreach ($this->userRoles as $userRole) {
+            $role = $userRole->getRole()->getName();
+            $roles[] = $role;
+        }
+        return array_unique($roles);
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials(): void {}
+
+    /**
      * @var Collection<int, UserPermission>
      */
     #[ORM\OneToMany(targetEntity: UserPermission::class, mappedBy: 'userEntity', orphanRemoval: true)]
     private Collection $userPermissions;
 
+    /**
+     * @var Collection<int, UserRole>
+     */
+    #[ORM\OneToMany(targetEntity: UserRole::class, mappedBy: 'userEntity', orphanRemoval: true)]
+    private Collection $userRoles;
+
     public function __construct()
     {
         $this->userPermissions = new ArrayCollection();
+        $this->userRoles = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
     public function onPrePersist(): void
     {
-        $now = getTimeNowUTC();
+        $now = TimeUtils::getTimeNowUTC();
         $this->createdAt = $now;
         $this->updatedAt = $now;
     }
@@ -57,7 +93,7 @@ class User
     #[ORM\PreUpdate]
     public function onPreUpdate(): void
     {
-        $this->updatedAt = getTimeNowUTC();
+        $this->updatedAt = TimeUtils::getTimeNowUTC();
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
@@ -141,6 +177,36 @@ class User
             // set the owning side to null (unless already changed)
             if ($userPermission->getUserEntity() === $this) {
                 $userPermission->setUserEntity(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserRole>
+     */
+    public function getUserRoles(): Collection
+    {
+        return $this->userRoles;
+    }
+
+    public function addUserRole(UserRole $userRole): static
+    {
+        if (!$this->userRoles->contains($userRole)) {
+            $this->userRoles->add($userRole);
+            $userRole->setUserEntity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserRole(UserRole $userRole): static
+    {
+        if ($this->userRoles->removeElement($userRole)) {
+            // set the owning side to null (unless already changed)
+            if ($userRole->getUserEntity() === $this) {
+                $userRole->setUserEntity(null);
             }
         }
 

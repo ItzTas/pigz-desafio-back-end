@@ -3,10 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\ListItemRepository;
+use App\Utils\TimeUtils;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\DBAL\Types\Types;
-
-use function App\Utils\getTimeNowUTC;
 
 #[ORM\Entity(repositoryClass: ListItemRepository::class)]
 #[ORM\Table(name: '`list_items`')]
@@ -40,7 +39,7 @@ class ListItem
     #[ORM\PrePersist]
     public function onPrePersist(): void
     {
-        $now = getTimeNowUTC();
+        $now = TimeUtils::getTimeNowUTC();
         $this->createdAt = $now;
         $this->updatedAt = $now;
     }
@@ -48,7 +47,7 @@ class ListItem
     #[ORM\PreUpdate]
     public function onPreUpdate(): void
     {
-        $this->updatedAt = getTimeNowUTC();
+        $this->updatedAt = TimeUtils::getTimeNowUTC();
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
