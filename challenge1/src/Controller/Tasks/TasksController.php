@@ -14,14 +14,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class TasksController extends AbstractController
 {
-    private ListEntityRepository $listsRepository;
-    private ListItemRepository $listItemsRepository;
-
-    public function __construct(ListEntityRepository $listsRepository, ListItemRepository $listItemsRepository)
-    {
-        $this->listsRepository = $listsRepository;
-        $this->listItemsRepository = $listItemsRepository;
-    }
+    public function __construct(
+        private ListEntityRepository $listsRepository,
+        private ListItemRepository $listItemsRepository,
+    ) {}
 
     #[Route('/lists/{listID<\d+>}/tasks', name: 'create_task', methods: ['POST'])]
     public function createTask(

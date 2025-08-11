@@ -12,12 +12,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class ListsController extends AbstractController
 {
-    private ListEntityRepository $listsRepository;
 
-    public function __construct(ListEntityRepository $listsRepository)
-    {
-        $this->listsRepository = $listsRepository;
-    }
+    public function __construct(
+        private ListEntityRepository $listsRepository
+    ) {}
 
     #[Route('/lists/{id<\d+>}', name: 'get_list', methods: ['GET'])]
     public function getList(int $id): JsonResponse
