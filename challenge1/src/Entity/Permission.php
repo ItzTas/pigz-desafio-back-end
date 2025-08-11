@@ -46,6 +46,10 @@ class Permission
                 'name' => 'CREATE_USER',
                 'description' => 'Create and register new users',
             ],
+            [
+                'name' => 'GRANT_PERMISSION',
+                'description' => 'Grant permissiono to other users',
+            ],
         ];
     }
 

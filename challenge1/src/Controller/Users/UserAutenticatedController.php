@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\Exception\AccessDeniedException;
 use App\DTO\CreateUserDTO;
 use App\DTO\SerializableUser;
 use App\Entity\User;
+use App\Repository\UserPermissionRepository;
 use App\Repository\UserRepository;
 use App\Service\AuthService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,6 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -24,6 +26,7 @@ final class UserAutenticatedController extends AbstractController
         private UserRepository $userRepository,
         private UserPasswordHasherInterface $passwordHasher,
         private AuthService $authService,
+        private UserPermissionRepository $userPermissionRepository,
     ) {}
 
     #[Route('/users', name: 'create_user', methods: ['POST'])]
@@ -32,7 +35,9 @@ final class UserAutenticatedController extends AbstractController
         Request $req,
     ): JsonResponse {
         $authUser = $this->userRepository->findUserByRequestWithToken($req);
-        if (!$this->authService->hasUserPermission('CREATE_USER', $authUser)) {
+        $authorized = $this->authService->hasUserPermission('CREATE_USER', $authUser);
+
+        if (!$authorized) {
             throw new AccessDeniedException('User does not have permission for operation');
         }
 
@@ -40,7 +45,6 @@ final class UserAutenticatedController extends AbstractController
         if ($user !== null) {
             throw new BadRequestException('This email is already beeing used');
         }
-
 
         $user = new User()
             ->setEmail($data->email)
@@ -50,5 +54,18 @@ final class UserAutenticatedController extends AbstractController
         $this->userRepository->registerUserClass($user);
 
         return $this->json(new SerializableUser($user));
+    }
+
+    #[Route('/register/permission/{id<\d+>}', name: 'register_permission', methods: 'GET')]
+    public function registerPermission(int $id, Request $req)
+    {
+        $authUser = $this->userRepository->findUserByRequestWithToken($req);
+        $authorized = $this->authService->hasUserPermission('GRANT_PERMISSION', $authUser);
+        if (!$authorized) {
+            throw new AccessDeniedException('User does not have permission for operation');
+        }
+        $user = $this->userRepository->findUserByID($id);
+        $userPermission = $this->userPermissionRepository->registerPermission('CREATE_USER', $user);
+        return $this->json($userPermission);
     }
 }

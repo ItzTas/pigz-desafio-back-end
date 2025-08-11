@@ -46,6 +46,11 @@ class UserRepository extends ServiceEntityRepository
         return $this->findOneBy(['email' => $email]);
     }
 
+    public function findUserByID(int $id): ?User
+    {
+        return $this->find($id);
+    }
+
     public function findUserByRequestWithToken(Request $req): ?User
     {
         $token = AuthUtils::getTokenFromRequest($req);

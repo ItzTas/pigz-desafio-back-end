@@ -2,49 +2,39 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Permission;
 use App\Entity\User;
-use App\Repository\PermissionRepository;
-use App\Repository\UserPermissionRepository;
-use App\Repository\UserRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class AppFixtures extends Fixture implements FixtureGroupInterface
+class AppFixtures extends Fixture
 {
     public function __construct(
-        private UserPermissionRepository $userPermissionRepository,
         private UserPasswordHasherInterface $passwordHasher,
-        private PermissionRepository $permissionRepository,
-        private UserRepository $userRepository,
     ) {}
 
     public function load(ObjectManager $manager): void
     {
-        $this->loadPermissions()
-            ->loadSuperUser($manager);
-
-        $superuser = $this->userRepository->findUserByEmail('superuser@email');
-        $this->userPermissionRepository->registerPermission('CREATE_USER', $superuser);
+        $this->loadPermissions($manager);
+        $this->loadSuperUser($manager);
+        $manager->flush();
     }
 
-    /**
-     *
-     * @return string[]
-     */
-    public static function getGroups(): array
+    private function loadPermissions(ObjectManager $manager): static
     {
-        return ['user_permissions'];
-    }
-
-    private function loadPermissions(): static
-    {
-        $this->permissionRepository->createPermissions();
+        $permissions = Permission::getPermissions();
+        foreach ($permissions as $perm) {
+            $permission = new Permission()
+                ->setName($perm['name'])
+                ->setDescription($perm['description']);
+            $manager->persist($permission);
+            $manager->flush();
+        }
         return $this;
     }
 
-    private function loadSuperUser(): static
+    private function loadSuperUser(ObjectManager $manager): User
     {
         $email = 'superuser@email';
         $name = 'superuser';
@@ -55,8 +45,8 @@ class AppFixtures extends Fixture implements FixtureGroupInterface
             ->setEmail($email);
         $password = $this->passwordHasher->hashPassword($user, $user_password);
         $user->setPassword($password);
-        $user = $this->userRepository->registerUserClass($user);
+        $manager->persist($user);
 
-        return $this;
+        return $user;
     }
 }

@@ -23,16 +23,6 @@ final class UsersController extends AbstractController
         private UserPermissionRepository $userPermissionRepository,
     ) {}
 
-    #[Route('/register/permission/{id<\d+>}', name: 'register_permission', methods: 'GET')]
-    public function registerPermission(int $id)
-    {
-        $user = $this->userRepository->find($id);
-
-        $permission = $this->userPermissionRepository->registerPermission('CREATE_USER', $user);
-
-        return $this->json($permission->getId());
-    }
-
     #[Route('/login', name: 'login', methods: ['POST'])]
     public function login(
         #[MapRequestPayload] LoginDTO $data,
@@ -47,14 +37,6 @@ final class UsersController extends AbstractController
         }
 
         $token = $this->tokenService->encode($user->getId());
-
-        if ($user->getEmail() === 'superuser@email') {
-            try {
-                $this->userPermissionRepository->registerPermission('CREATE_USER', $user);
-            } catch (\Exception) {
-                // ignore error superuser needs to have permission and DataFixtures generation is buged
-            }
-        }
 
         return $this->json([
             'user' => new SerializableUser($user),
