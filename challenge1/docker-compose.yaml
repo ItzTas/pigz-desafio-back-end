@@ -37,18 +37,6 @@ services:
       retries: 10
       start_period: 10s
 
-  # pgadmin:
-  #   image: elestio/pgadmin:latest
-  #   ports:
-  #     - 8081:8081
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: p@h.com
-  #     PGADMIN_DEFAULT_PASSWORD: password
-  #     PGADMIN_LISTEN_PORT: 8081
-  #   networks:
-  #     - app
-  #   volumes:
-  #     - ../docker/dbdata/pgadmindata:/var/lib/pgadmin
 networks:
   app:
     driver: bridge

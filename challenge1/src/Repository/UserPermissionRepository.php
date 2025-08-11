@@ -21,6 +21,7 @@ class UserPermissionRepository extends ServiceEntityRepository
 
     public function registerPermission(string $permissionName, User $user, bool $flush = true): ?UserPermission
     {
+        $permissionName = strtoupper($permissionName);
         if ($user === null) {
             return null;
         }

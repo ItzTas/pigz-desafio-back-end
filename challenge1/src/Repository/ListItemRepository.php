@@ -41,7 +41,7 @@ class ListItemRepository extends ServiceEntityRepository
         }
         return $item;
     }
-    public function getItemByID(int $id): ?ListItem
+    public function findItemByID(int $id): ?ListItem
     {
         return $this->find($id);
     }

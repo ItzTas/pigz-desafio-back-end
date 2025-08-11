@@ -8,6 +8,7 @@ use App\DTO\SerializableListEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class ListsController extends AbstractController
@@ -20,9 +21,9 @@ final class ListsController extends AbstractController
     #[Route('/lists/{id<\d+>}', name: 'get_list', methods: ['GET'])]
     public function getList(int $id): JsonResponse
     {
-        $list = $this->listsRepository->getListByID($id);
+        $list = $this->listsRepository->findListByID($id);
         if ($list === null) {
-            return $this->json("list with id: $id not found", 404);
+            throw new NotFoundHttpException("list with id: $id not found");
         }
         return $this->json(new SerializableListEntity($list));
     }
@@ -30,7 +31,7 @@ final class ListsController extends AbstractController
     #[Route('/lists/{id<\d+>}', name: 'delete_list', methods: ['DELETE'])]
     public function deleteList(int $id): JsonResponse
     {
-        $list = $this->listsRepository->getListByID($id);
+        $list = $this->listsRepository->findListByID($id);
         if ($list === null) {
             return $this->json("list with id: $id not found", 404);
         }

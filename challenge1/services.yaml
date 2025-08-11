@@ -1,10 +1,16 @@
 services:
-  App\Service\AuthService:
-    alias: AuthService
+  App\EventSubscriber\TokenSubscriber:
+    public: true
     arguments:
-      $passwordHasher: '@security.password_hasher'
-      $jwtManager: '@lexik_jwt_authentication.jwt_manager'
-  App\EventListener\JWTCreatedListener:
-    arguments: ['@request_stack']
+      - '@App\Service\TokenService'
     tags:
-      - {name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated}
+      - {name: kernel.event_subscriber}
+  App\Controller\Users\UserAutenticatedController:
+    public: true
+    tags: ['controller.service_arguments']
+  _defaults:
+    autowire: true
+    autoconfigure: true
+  App\Service\TokenService:
+    arguments:
+      $jwtSecret: '%env(JWT_SECRET)%'

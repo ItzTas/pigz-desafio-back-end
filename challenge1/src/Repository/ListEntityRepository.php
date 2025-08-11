@@ -32,7 +32,7 @@ class ListEntityRepository extends ServiceEntityRepository
         return $list;
     }
 
-    public function getListByID(int $id): ?ListEntity
+    public function findListByID(int $id): ?ListEntity
     {
         return $this->find($id);
     }

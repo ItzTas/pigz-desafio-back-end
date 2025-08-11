@@ -10,6 +10,7 @@ use App\DTO\SerializableListItem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class TasksController extends AbstractController
@@ -24,9 +25,9 @@ final class TasksController extends AbstractController
         int $listID,
         #[MapRequestPayload] CreateTaskDTO $data,
     ): JsonResponse {
-        $list = $this->listsRepository->getListByID($listID);
+        $list = $this->listsRepository->findListByID($listID);
         if ($list === null) {
-            return $this->json("list with id: $listID not found", 404);
+            throw new NotFoundHttpException("list with id: $listID not found");
         }
 
         $task = $this->listItemsRepository->createItem(
@@ -43,9 +44,9 @@ final class TasksController extends AbstractController
         int $id,
         #[MapRequestPayload] ?MarkTaskDTO $data,
     ): JsonResponse {
-        $item = $this->listItemsRepository->getItemByID($id);
+        $item = $this->listItemsRepository->findItemByID($id);
         if ($item === null) {
-            return $this->json("task with id: $id not found", 404);
+            throw new NotFoundHttpException("task with id: $id not found");
         }
         $isDone = $data?->getIsDone() ?? true;
         $this->listItemsRepository->markItem($item, $isDone);
@@ -56,9 +57,9 @@ final class TasksController extends AbstractController
     public function deleteTask(
         int $id,
     ): JsonResponse {
-        $item = $this->listItemsRepository->getItemByID($id);
+        $item = $this->listItemsRepository->findItemByID($id);
         if ($item === null) {
-            return $this->json("task with id: $id not found", 404);
+            throw new NotFoundHttpException("task with id: $id not found");
         }
 
         $this->listItemsRepository->deleteItemByID($id);

@@ -12,8 +12,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class AppFixtures extends Fixture
 {
     public function __construct(
-        private UserPasswordHasherInterface $passwordHasher,
         private UserPermissionRepository $userPermissionRepository,
+        private UserPasswordHasherInterface $passwordHasher,
     ) {}
 
     public function load(ObjectManager $manager): void
@@ -38,12 +38,14 @@ class AppFixtures extends Fixture
 
     private function loadSuperUser(ObjectManager $manager): static
     {
-        $permission = $manager->getRepository(Permission::class)->findOneBy(['name' => 'CREATE_USER']);
+        $email = 'superuser@email';
+        $name = 'superuser';
+        $user_password = 'password';
 
         $user = new User()
-            ->setName('superuser')
-            ->setEmail('superuser@email');
-        $password = $this->passwordHasher->hashPassword($user, 'password');
+            ->setName($name)
+            ->setEmail($email);
+        $password = $this->passwordHasher->hashPassword($user, $user_password);
         $user->setPassword($password);
 
         $manager->persist($user);

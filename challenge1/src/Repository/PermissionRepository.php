@@ -7,7 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Permissions>
+ * @extends ServiceEntityRepository<Permission>
  */
 class PermissionRepository extends ServiceEntityRepository
 {
@@ -18,6 +18,12 @@ class PermissionRepository extends ServiceEntityRepository
 
     public function findPermissionByName(string $permissionName): ?Permission
     {
+        $permissionName = strtoupper($permissionName);
         return $this->findOneBy(['name' => $permissionName]);
+    }
+
+    public function findPermissionByID(int $permissionID): ?Permission
+    {
+        return $this->find($permissionID);
     }
 }
