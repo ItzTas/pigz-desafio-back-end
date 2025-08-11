@@ -4,6 +4,7 @@ namespace App\Controller\Users;
 
 use ApiPlatform\Metadata\Exception\AccessDeniedException;
 use App\DTO\CreateUserDTO;
+use App\DTO\RegisterPermissionDTO;
 use App\DTO\SerializableUser;
 use App\Entity\User;
 use App\Repository\UserPermissionRepository;
@@ -15,7 +16,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -56,16 +56,22 @@ final class UserAutenticatedController extends AbstractController
         return $this->json(new SerializableUser($user));
     }
 
-    #[Route('/register/permission/{id<\d+>}', name: 'register_permission', methods: 'GET')]
-    public function registerPermission(int $id, Request $req)
-    {
+    #[Route('/users/{<\id+>}/permission', name: 'register_permission', methods: ['POST'])]
+    public function registerPermission(
+        int $id,
+        #[MapRequestPayload] RegisterPermissionDTO $data,
+        Request $req,
+    ) {
         $authUser = $this->userRepository->findUserByRequestWithToken($req);
         $authorized = $this->authService->hasUserPermission('GRANT_PERMISSION', $authUser);
         if (!$authorized) {
             throw new AccessDeniedException('User does not have permission for operation');
         }
         $user = $this->userRepository->findUserByID($id);
-        $userPermission = $this->userPermissionRepository->registerPermission('CREATE_USER', $user);
+        if ($this->authService->hasUserPermission($data->permissionName, $user)) {
+            throw new BadRequestException('User already has this permission');
+        }
+        $userPermission = $this->userPermissionRepository->registerPermission($data->permissionName, $user);
         return $this->json($userPermission);
     }
 }
