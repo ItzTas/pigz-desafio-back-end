@@ -29,6 +29,7 @@ RUN apk add --no-cache \
 RUN apk add --no-cache php-sodium \
     && docker-php-ext-enable sodium
 
+RUN php bin/console lexik:jwt:generate-keypair
 
 COPY ./scripts/init.sh /init.sh
 RUN chmod +x /init.sh
