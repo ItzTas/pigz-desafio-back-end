@@ -12,7 +12,7 @@ docker compose up
 
 todas as rotas possuem o prefixo /api
 
-Para fins de teste um superuser é criado na no banco de dados com as seguintes informações:
+Para fins de teste criei um superuser com todas as permissões e com as seguintes informações:
 
 email = 'superuser@email';
 name = 'superuser';
