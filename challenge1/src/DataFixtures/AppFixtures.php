@@ -3,40 +3,32 @@
 namespace App\DataFixtures;
 
 use App\Entity\Permission;
-use App\Entity\Role;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    public function __construct(
+        private UserPasswordHasherInterface $passwordHasher
+    ) {}
+
     public function load(ObjectManager $manager): void
     {
         $this->loadPermissions($manager)
-            ->loadSuperUser($manager)
-            ->loadRoles($manager);
+            ->loadSuperUser($manager);
 
         $manager->flush();
-    }
-
-    private function loadRoles(ObjectManager $manager): static
-    {
-        $roles = Role::getRoles();
-        foreach ($roles as $r) {
-            $role = new Role();
-            $role->setName($r['name']);
-            $role->setDescription($r['description']);
-            $manager->persist($role);
-        }
-        return $this;
     }
 
     private function loadPermissions(ObjectManager $manager): static
     {
         $permissions = Permission::getPermissions();
         foreach ($permissions as $perm) {
-            $permission = new Permission();
-            $permission->setName($perm['name']);
-            $permission->setDescription($perm['description']);
+            $permission = new Permission()
+                ->setName($perm['name'])
+                ->setDescription($perm['description']);
             $manager->persist($permission);
         }
         return $this;
@@ -44,6 +36,17 @@ class AppFixtures extends Fixture
 
     private function loadSuperUser(ObjectManager $manager): static
     {
+        $permission = $manager->getRepository(Permission::class)->findOneBy(['name' => 'CREATE_USER']);
+
+        $user = new User()
+            ->setName('superuser')
+            ->setEmail('superuser@email');
+
+        $password = $this->passwordHasher->hashPassword($user, 'password');
+        $user->setPassword($password);
+
+        $manager->persist($user);
+
         return $this;
     }
 }
