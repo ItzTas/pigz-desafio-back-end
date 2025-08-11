@@ -19,13 +19,15 @@ class AuthService
         $this->jwtManager = $jwtManager;
     }
 
-    public function hash(User $user, string $plainPassword): string
+    public function hashPassword(User $user, string $plainPassword): string
     {
         return $this->passwordHasher->hashPassword($user, $plainPassword);
     }
 
-    // public function verify(string $plainPassword, string $hashedPassword): bool
-    // {
-    //     return $this->passwordHasher->verify($hashedPassword, $plainPassword);
-    // }
+    public function verifyPassword(string $plainPassword, string $hashedPassword): bool
+    {
+        return $this->passwordHasher->isPasswordValid;
+    }
+
+    public function getJWTToken() {}
 }
