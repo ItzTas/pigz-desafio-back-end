@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Permission;
 use App\Entity\User;
+use App\Repository\UserPermissionRepository;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -11,7 +12,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class AppFixtures extends Fixture
 {
     public function __construct(
-        private UserPasswordHasherInterface $passwordHasher
+        private UserPasswordHasherInterface $passwordHasher,
+        private UserPermissionRepository $userPermissionRepository,
     ) {}
 
     public function load(ObjectManager $manager): void
@@ -41,11 +43,12 @@ class AppFixtures extends Fixture
         $user = new User()
             ->setName('superuser')
             ->setEmail('superuser@email');
-
         $password = $this->passwordHasher->hashPassword($user, 'password');
         $user->setPassword($password);
 
         $manager->persist($user);
+
+        $this->userPermissionRepository->registerPermission('CREATE_USER', $user, false);
 
         return $this;
     }

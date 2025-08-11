@@ -19,8 +19,28 @@ class UserPermissionRepository extends ServiceEntityRepository
         parent::__construct($registry, UserPermission::class);
     }
 
-    public function registerPermission(string $permissionName, User $user)
+    public function registerPermission(string $permissionName, User $user, bool $flush = true): ?UserPermission
     {
+        if ($user === null) {
+            return null;
+        }
+
         $permission = $this->permissionRepository->findPermissionByName($permissionName);
+        if ($permission === null) {
+            return null;
+        }
+
+        $userPermission = new UserPermission()
+            ->setUserEntity($user)
+            ->setPermission($permission);
+
+        $user->addUserPermission($userPermission);
+        $this->getEntityManager()->persist($userPermission);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+
+        return $userPermission;
     }
 }
