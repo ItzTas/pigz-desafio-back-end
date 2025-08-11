@@ -2,20 +2,19 @@
 
 namespace App\EventSubscriber;
 
-use App\Middleware\TokenAuthenticatedControler;
-use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\TokenExtractorInterface;
+use App\MiddlewareInterfaces\TokenAuthenticatedControler;
+use App\Services\AuthService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class TokenSubscriber implements EventSubscriberInterface
 {
-    private array $tokens;
-    private TokenExtractorInterface $tokenExtractor;
+    private AuthService $authService;
 
-    public function __construct(TokenExtractorInterface $tokenExtractor)
+    public function __construct(AuthService $authService)
     {
-        $this->tokenExtractor = $tokenExtractor;
+        $this->authService = $authService;
     }
 
     public static function getSubscribedEvents(): array
@@ -33,6 +32,6 @@ class TokenSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $token = $this->tokenExtractor->extract($event->getRequest());
+        $token = $this->authService->getJWTToken();
     }
 }
