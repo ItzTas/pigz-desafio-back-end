@@ -56,7 +56,7 @@ final class UserAutenticatedController extends AbstractController
         return $this->json(new SerializableUser($user));
     }
 
-    #[Route('/users/{<\id+>}/permission', name: 'register_permission', methods: ['POST'])]
+    #[Route('/users/{<\id+>}/permissions', name: 'register_permission', methods: ['POST'])]
     public function registerPermission(
         int $id,
         #[MapRequestPayload] RegisterPermissionDTO $data,
