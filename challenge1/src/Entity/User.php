@@ -9,12 +9,11 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`users`')]
 #[ORM\HasLifecycleCallbacks]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -24,7 +23,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 320)]
+    #[ORM\Column(length: 320, unique: true)]
     private ?string $email = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -37,47 +36,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeImmutable $updatedAt = null;
 
     /**
-     * @see UserInterface
-     */
-    public function getUserIdentifier(): string
-    {
-        return $this->email;
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function getRoles(): array
-    {
-        $roles = [];
-        foreach ($this->userRoles as $userRole) {
-            $role = $userRole->getRole()->getName();
-            $roles[] = $role;
-        }
-        return array_unique($roles);
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function eraseCredentials(): void {}
-
-    /**
      * @var Collection<int, UserPermission>
      */
     #[ORM\OneToMany(targetEntity: UserPermission::class, mappedBy: 'userEntity', orphanRemoval: true)]
     private Collection $userPermissions;
 
-    /**
-     * @var Collection<int, UserRole>
-     */
-    #[ORM\OneToMany(targetEntity: UserRole::class, mappedBy: 'userEntity', orphanRemoval: true)]
-    private Collection $userRoles;
-
     public function __construct()
     {
         $this->userPermissions = new ArrayCollection();
-        $this->userRoles = new ArrayCollection();
     }
 
     #[ORM\PrePersist]
@@ -175,36 +141,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($userPermission->getUserEntity() === $this) {
                 $userPermission->setUserEntity(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, UserRole>
-     */
-    public function getUserRoles(): Collection
-    {
-        return $this->userRoles;
-    }
-
-    public function addUserRole(UserRole $userRole): static
-    {
-        if (!$this->userRoles->contains($userRole)) {
-            $this->userRoles->add($userRole);
-            $userRole->setUserEntity($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserRole(UserRole $userRole): static
-    {
-        if ($this->userRoles->removeElement($userRole)) {
-            // set the owning side to null (unless already changed)
-            if ($userRole->getUserEntity() === $this) {
-                $userRole->setUserEntity(null);
             }
         }
 
