@@ -19,11 +19,10 @@ class ListItemRepository extends ServiceEntityRepository
 
     public function createItem(string $name, ?string $description, ListEntity $list, bool $flush = true)
     {
-        $item = new ListItem();
-
-        $item->setDescription($description);
-        $item->setName($name);
-        $item->setListEntity($list);
+        $item = new ListItem()
+            ->setDescription($description)
+            ->setName($name)
+            ->setListEntity($list);
 
         $this->getEntityManager()->persist($item);
         if ($flush) {

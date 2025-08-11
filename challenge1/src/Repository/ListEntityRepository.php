@@ -19,10 +19,9 @@ class ListEntityRepository extends ServiceEntityRepository
 
     public function createList(string $name, ?string $description, bool $flush = true): ListEntity
     {
-        $list = new ListEntity();
-
-        $list->setName($name);
-        $list->setDescription($description);
+        $list = new ListEntity()
+            ->setName($name)
+            ->setDescription($description);
 
         $this->getEntityManager()->persist($list);
 

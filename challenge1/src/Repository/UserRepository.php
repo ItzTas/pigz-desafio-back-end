@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\User;
-use App\Services\AuthService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -12,18 +11,22 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, AuthService $authService)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);
     }
 
     public function registerUser(string $name, string $email, string $hashedPassword, bool $flush = true): User
     {
-        $user = new User();
-        $user->setEmail($email);
-        $user->setName($name);
-        $user->setPassword($hashedPassword);
+        $user = new User()
+            ->setEmail($email)
+            ->setName($name)
+            ->setPassword($hashedPassword);
         $this->getEntityManager()->persist($user);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
         return $user;
     }
 }
