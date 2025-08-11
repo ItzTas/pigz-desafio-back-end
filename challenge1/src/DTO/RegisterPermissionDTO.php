@@ -11,6 +11,9 @@ class RegisterPermissionDTO
     #[Assert\NotBlank(message: 'Missing camp: permission_name')]
     public string $permissionName;
 
+    #[Assert\NotBlank(message: 'Missing camp: user_id')]
+    public int $userID;
+
     #[Assert\Callback]
     public function validatePermissionName(ExecutionContextInterface $context): void
     {

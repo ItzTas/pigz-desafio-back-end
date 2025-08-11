@@ -56,9 +56,8 @@ final class UserAutenticatedController extends AbstractController
         return $this->json(new SerializableUser($user));
     }
 
-    #[Route('/users/{<id\d+>}/permissions', name: 'register_permission', methods: ['POST'])]
+    #[Route('/users/permissions', name: 'register_permission', methods: ['POST'])]
     public function registerPermission(
-        int $id,
         #[MapRequestPayload] RegisterPermissionDTO $data,
         Request $req,
     ) {
@@ -67,7 +66,7 @@ final class UserAutenticatedController extends AbstractController
         if (!$authorized) {
             throw new AccessDeniedException('User does not have permission for operation');
         }
-        $user = $this->userRepository->findUserByID($id);
+        $user = $this->userRepository->findUserByID($data->userID);
         if ($this->authService->hasUserPermission($data->permissionName, $user)) {
             throw new BadRequestException('User already has this permission');
         }
