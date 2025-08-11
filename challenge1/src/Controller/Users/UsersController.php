@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Users;
 
-use App\MiddlewareInterfaces\TokenAuthenticatedControler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class UsersController extends AbstractController implements TokenAuthenticatedControler
+final class UsersController extends AbstractController
 {
     #[Route('/login', name: 'login', methods: ['POST'])]
     public function index(): JsonResponse
@@ -25,11 +24,5 @@ final class UsersController extends AbstractController implements TokenAuthentic
             'message' => 'Welcome to your new controller!',
             'path' => 'src/Controller/UsersController.php',
         ]);
-    }
-
-    #[Route('/users', name: 'create_user', methods: ['POST'])]
-    public function createUser(): JsonResponse
-    {
-        return $this->json([]);
     }
 }

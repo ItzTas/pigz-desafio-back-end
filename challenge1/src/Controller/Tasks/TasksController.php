@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Tasks;
 
 use App\DTO\CreateTaskDTO;
 use App\DTO\MarkTaskDTO;

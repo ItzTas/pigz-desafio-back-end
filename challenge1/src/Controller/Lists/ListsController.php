@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Lists;
 
 use App\DTO\CreateListDTO;
 use App\Repository\ListEntityRepository;
