@@ -26,4 +26,26 @@ class PermissionRepository extends ServiceEntityRepository
     {
         return $this->find($permissionID);
     }
+
+    public function createPermissions()
+    {
+        $permissions = Permission::getPermissions();
+        foreach ($permissions as $permissionData) {
+            $existingPermission = $this->permissionRepository->findOneBy([
+                'name' => $permissionData['name']
+            ]);
+
+            if ($existingPermission) {
+                continue;
+            }
+
+            $permission = new Permission();
+            $permission->setName($permissionData['name'])
+                ->setDescription($permissionData['description']);
+
+            $this->getEntityManager()->persist($permission);
+        }
+
+        $this->getEntityManager()->flush();
+    }
 }

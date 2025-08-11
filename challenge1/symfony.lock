@@ -82,6 +82,9 @@
             "config/packages/lexik_jwt_authentication.yaml"
         ]
     },
+    "liip/test-fixtures-bundle": {
+        "version": "3.5.0"
+    },
     "symfony/console": {
         "version": "7.3",
         "recipe": {

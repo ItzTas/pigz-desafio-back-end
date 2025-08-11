@@ -18,9 +18,23 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    public function registerUser(User $user, bool $flush = true): User
+    public function registerUserClass(User $user, bool $flush = true): User
     {
         $this->getEntityManager()->persist($user);
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+        return $user;
+    }
+
+    public function registerUser(string $name, string $email, string $hashedPassword, bool $flush = true): User
+    {
+        $user = new User()
+            ->setEmail($email)
+            ->setName($name)
+            ->setPassword($hashedPassword);
+        $this->getEntityManager()->persist($user);
+
         if ($flush) {
             $this->getEntityManager()->flush();
         }

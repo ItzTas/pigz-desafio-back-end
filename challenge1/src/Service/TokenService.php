@@ -21,7 +21,7 @@ class TokenService
         if (!array_key_exists('exp', $payload)) {
             $payload['exp'] = time() + 3600;
         }
-        $payload['iat'] = TimeUtils::getTimeNowUTC();
+        $payload['iat'] = TimeUtils::getTimeNowUTCint();
         return JWT::encode($payload, $this->jwtSecret, 'HS256');
     }
 
@@ -29,8 +29,8 @@ class TokenService
      *
      * @return array{
      *    id: int,
-     *    iat: \DateTimeImmutable,
-     *    exp: \DateTimeImmutable
+     *    iat: int,
+     *    exp: int,
      *    string: mixed
      * }
      */

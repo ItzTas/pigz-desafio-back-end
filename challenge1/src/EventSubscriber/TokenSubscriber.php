@@ -3,7 +3,6 @@
 namespace App\EventSubscriber;
 
 use ApiPlatform\Metadata\Exception\AccessDeniedException;
-use App\Controller\TokenAuthenticatedControler;
 use App\Service\TokenService;
 use App\Utils\AuthUtils;
 use Firebase\JWT\ExpiredException;
@@ -27,13 +26,10 @@ class TokenSubscriber implements EventSubscriberInterface
 
     public function onKernelController(ControllerEvent $event)
     {
-        $controler = $event->getController();
-
-        if (!$controler instanceof TokenAuthenticatedControler) {
+        $token = AuthUtils::getBearerToken($event->getRequest());
+        if ($token === null) {
             return;
         }
-
-        $token = AuthUtils::getBearerToken($event->getRequest());
 
         try {
             $decoded = $this->tokenService->decode($token);

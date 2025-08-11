@@ -7,7 +7,12 @@ use App\Utils\TimeUtils;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserPermissionRepository::class)]
-#[ORM\Table(name: '`user_permissions`')]
+#[ORM\Table(
+    name: '`users_permissions`',
+    uniqueConstraints: [
+        new ORM\UniqueConstraint(columns: ['user_id', 'permission_id'])
+    ]
+)]
 #[ORM\HasLifecycleCallbacks]
 class UserPermission
 {
@@ -87,5 +92,15 @@ class UserPermission
         $this->permission = $permission;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return sprintf(
+            'UserPermission[id=%d, user=%s, permission=%s]',
+            $this->getId(),
+            $this->getUserEntity()->getEmail(),
+            $this->getPermission()->getName()
+        );
     }
 }

@@ -8,4 +8,9 @@ class TimeUtils
     {
         return (new \DateTimeImmutable())->setTimezone(new \DateTimeZone('UTC'));
     }
+
+    public static function getTimeNowUTCint()
+    {
+        return (new \DateTimeImmutable())->setTimezone(new \DateTimeZone('UTC'))->getTimestamp();
+    }
 }

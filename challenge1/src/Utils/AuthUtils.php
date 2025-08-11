@@ -11,7 +11,7 @@ class AuthUtils
     {
         $authorizationHeader = $req->headers->get('Authorization');
         if ($authorizationHeader === null) {
-            throw new UnauthorizedHttpException('Missing token');
+            return null;
         }
         $headerParts = explode(' ', $authorizationHeader);
 

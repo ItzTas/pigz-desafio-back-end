@@ -10,7 +10,8 @@ class AuthService
 {
     public function hasUserPermission(string $permissionName, User $user): bool
     {
-        if (!in_array($permissionName, Permission::getPermissions())) {
+        $availablePermissions = array_column(Permission::getPermissions(), 'name');
+        if (!in_array($permissionName, $availablePermissions)) {
             throw new HttpException(500, "Permission with name: $permissionName does not exist");
         }
 
